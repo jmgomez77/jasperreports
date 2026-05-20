@@ -1,0 +1,15 @@
+CVE-2026-6009 Security Patch
+=============================
+Patch developed by: Jose Manuel Gomez Alvarez (jose@irisel.com)
+Organization: Irisel Consulting SL
+Date: 2026-05-20
+Branch: fix/cve-2026-6009-backport-6.21.5
+Base version: 6.21.5 (patched as 6.21.6)
+
+This JAR contains a backported security fix for CVE-2026-6009 (Java
+deserialization RCE). It adds a deserialization class filter to all
+ObjectInputStream entry points (ContextClassLoaderObjectInputStream,
+VirtualizationObjectInputStream, JRValueStringUtils) with a whitelist
+enabled by default.
+
+This is NOT an official release from Cloud Software Group / Jaspersoft.

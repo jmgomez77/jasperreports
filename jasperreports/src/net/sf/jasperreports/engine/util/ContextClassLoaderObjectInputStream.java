@@ -42,6 +42,7 @@ import net.sf.jasperreports.engine.fonts.FontUtil;
 public class ContextClassLoaderObjectInputStream extends ObjectInputStream
 {
 	private final JasperReportsContext jasperReportsContext;
+	private final DeserializationClassFilter deserializationClassFilter;
 
 	/**
 	 * Creates an object input stream that reads data from the specified
@@ -56,6 +57,7 @@ public class ContextClassLoaderObjectInputStream extends ObjectInputStream
 		super(in);
 		
 		this.jasperReportsContext = jasperReportsContext;
+		this.deserializationClassFilter = new DeserializationClassFilter(jasperReportsContext);
 		
 		try
 		{
@@ -78,12 +80,30 @@ public class ContextClassLoaderObjectInputStream extends ObjectInputStream
 	/**
 	 * Calls <code>super.resolveClass()</code> and in case this fails with
 	 * {@link ClassNotFoundException} attempts to load the class using the
-	 * context class loader.
+	 * context class loader. Also applies the deserialization class filter
+	 * to block non-whitelisted classes.
 	 */
 	@Override
 	protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException,
 			ClassNotFoundException
 	{
+		if (deserializationClassFilter.isFilteringEnabled())
+		{
+			String className = desc.getName();
+			if (className.startsWith("["))
+			{
+				if (className.endsWith(";"))
+				{
+					className = className.substring(className.lastIndexOf("[L") + 2, className.length() - 1);
+				}
+				else
+				{
+					className = className.substring(className.lastIndexOf("[") + 1);
+				}
+			}
+			deserializationClassFilter.checkClassVisibility(className);
+		}
+
 		try
 		{
 			return super.resolveClass(desc);
