@@ -32,6 +32,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.util.Base64Util;
 
@@ -556,7 +557,9 @@ public final class JRValueStringUtils
 				Base64Util.decode(dataIn, bytesOut);
 				
 				ByteArrayInputStream bytesIn = new ByteArrayInputStream(bytesOut.toByteArray());
-				ObjectInputStream objectIn = new ObjectInputStream(bytesIn);
+				// Use filtered stream to guard against gadget-chain payloads (CVE-2026-6009)
+				ObjectInputStream objectIn = new ContextClassLoaderObjectInputStream(
+						DefaultJasperReportsContext.getInstance(), bytesIn);
 				return objectIn.readObject();
 			}
 			catch (IOException | ClassNotFoundException e)
