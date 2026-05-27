@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Built-By: Cloud Software Group, Inc.
+Specification-Title: JasperReports Fastexcel Data Source
+Specification-Version: 6.20.7
+Specification-Vendor: Cloud Software Group, Inc.
+Implementation-Title: net.sf.jasperreports.fastexcel
+Implementation-Version: 6.20.7-51e54a36d17c44b40dcba12ebb07056449a0012a
+Implementation-Vendor: Cloud Software Group, Inc.
+Bundle-ManifestVersion: 2
+Bundle-Name: JasperReports Fastexcel Data Source
+Bundle-Version: 6.20.7
+Bundle-Vendor: Cloud Software Group, Inc.
+Bundle-SymbolicName: net.sf.jasperreports.fastexcel
+Bundle-ClassPath: .
+Export-Package: net.sf.jasperreports.fastexcel
+DynamicImport-Package: *

@@ -26,6 +26,10 @@ package net.sf.jasperreports.engine.fill;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
+
+import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.engine.util.DeserializationClassFilter;
 
 /**
  * <code>java.io.ObjectInputStream</code> subclass used for deserializing report
@@ -36,6 +40,7 @@ import java.io.ObjectInputStream;
 public class VirtualizationObjectInputStream extends ObjectInputStream
 {
 	private final JRVirtualizationContext virtualizationContext;
+	private final JasperReportsContext jasperReportsContext;
 
 	public VirtualizationObjectInputStream(InputStream in, 
 			JRVirtualizationContext virtualizationContext) throws IOException
@@ -43,7 +48,20 @@ public class VirtualizationObjectInputStream extends ObjectInputStream
 		super(in);
 		
 		this.virtualizationContext = virtualizationContext;
+		this.jasperReportsContext = virtualizationContext.getJasperReportsContext();
 		enableResolveObject(true);
+	}
+
+	/**
+	 * Checks the class name against {@link DeserializationClassFilter} before
+	 * resolving it (CVE-2026-6009).
+	 */
+	@Override
+	protected Class<?> resolveClass(ObjectStreamClass desc)
+			throws IOException, ClassNotFoundException
+	{
+		DeserializationClassFilter.checkClassName(jasperReportsContext, desc.getName());
+		return super.resolveClass(desc);
 	}
 
 	@Override
